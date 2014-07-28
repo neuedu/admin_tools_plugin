@@ -1,0 +1,19 @@
+{
+    "name": "zhilihua/epals_client",
+    "description": "This is a Client Test",
+    "authors": [
+        {
+            "name": "Zhili Hua",
+            "email": "zhua@corp.epals.com"
+        }
+    ],
+    "require": {
+        "epals/epalsapi": "dev-master"
+    },
+    "repositories": [
+        {
+                "type": "vcs",
+                "url": "https://github.com/epals/epalsapi"
+        }
+    ]
+}
