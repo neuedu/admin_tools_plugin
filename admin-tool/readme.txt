@@ -18,5 +18,7 @@ es_add_course($para1, $title, $content);
 es_add_assignment($para1, $title, $content);
 es_add_activity($para1, $title, $content);
 
+and the hook befor the function:
+add_action('save_post', es_save_post);
 
 pls make sure that Elastic search server can be use perfectly.
