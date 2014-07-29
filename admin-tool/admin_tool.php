@@ -416,7 +416,7 @@ add_action('add_meta_boxes', 'add_session_list_box');
  */
 
 //elastic search insert (Epals API)
-//add_action('save_post', es_save_post);
+add_action('save_post', es_save_post);
 
 function es_save_post($para1 = "", $para2 = "", $para3 = "") {
     $title = $_POST['post_title'];
@@ -427,38 +427,38 @@ function es_save_post($para1 = "", $para2 = "", $para3 = "") {
         switch ($post_type) {
             case 'epals_course'://1
                 echo "epals_course";
-//es_add_course($para1, $title, $content);
+es_add_course($para1, $title, $content);
                 break;
             case 'epals_session'://1
-                echo "epals_session";
+                //echo "epals_session";
 //es_add_session($para1, $title, $content);
                 break;
             case 'epals_assignment'://1
                 echo "epals_assignment";
-//es_add_assignment($para1, $title, $content);
+es_add_assignment($para1, $title, $content);
                 break;
             case 'epals_activity'://1 ?
-                echo "epals_activity";
-//es_add_activity($para1, $title, $content);
+                //echo "epals_activity";
+es_add_activity($para1, $title, $content);
                 break;
             case 'epals_group'://1
-                echo "epals_group";
+                //echo "epals_group";
 //es_add_group($para1, $title, $content);
                 break;
             case 'epals_resource'://1
-                echo "epals_resource";
+                //echo "epals_resource";
 //es_add_resource($para1, $title, $content);
                 break;
             case 'epals_gallery'://?
-                echo "epals_gallery";
+                //echo "epals_gallery";
 //es_add_gallery($para1, $title, $content);
                 break;
             case 'epals_tool'://?
-                echo "epals_tool";
+                //echo "epals_tool";
 //es_add_tool($para1, $title, $content);
                 break;
             case 'epals_announcement'://1
-                echo "epals_announcement";
+                //echo "epals_announcement";
 //es_add_announcement($para1, $title, $content);
                 break;
             case 'epals_discussion'://1
@@ -466,12 +466,12 @@ function es_save_post($para1 = "", $para2 = "", $para3 = "") {
 //es_add_discussion($para1, $title, $content);
                 break;
             default:
-                var_dump("error:no config type!");
+                //var_dump("error:no config type!");
                 break;
         }
     }
-    $fields = get_field_objects($para1);
-    print_r($fields[resource]);
+    //$fields = get_field_objects($para1);
+    //print_r($fields[resource]);
 }
 
 function es_add_course($post_id, $title, $content) {
@@ -481,9 +481,11 @@ function es_add_course($post_id, $title, $content) {
     if (isset($fields['ElasticsearchID'])) {
         $esid = $fields['ElasticsearchID']['value'];
     }
-    $a = new Course();
+    //$a = new Course();
+    $a = new Project();
     $a->set_ElasticSearch_Server($ini['elasticsearch']['host'] . ":" . $ini['elasticsearch']['port']);
-    $a->setTitle($_POST['post_title']);
+    //$a->setTitle($_POST['post_title']);
+    $a->setProjectname($_POST['post_title']);
     $a->setDescription($_POST['content']);
     if (!empty($esid)) {
         $a->update();
