@@ -9,18 +9,19 @@
   Author URI: http://wp.tutsplus.com/
   License: GPLv2
  */
-require_once dirname(__FILE__).'/vendor/autoload.php';
+require_once dirname(__FILE__) . '/vendor/autoload.php';
 
 use \ePals\Activity;
-use \ePals\Course;
+//use \ePals\Course;
+use \ePals\Project;
 use \ePals\Assignment;
-
-//use \ePals\Session;
-//use \ePals\Resource;
+use \ePals\Session;
+use \ePals\Resource;
 //use \ePals\Gallery;
 //use \ePals\Tool;
-//use \ePals\Group;
-
+use \ePals\Group;
+use \ePals\Discussion;
+use \ePals\Announcement;
 
 function create_admin_tool() {
     register_post_type('epals_course', array(
@@ -53,6 +54,8 @@ function create_admin_tool() {
     );
 
 
+
+
     register_post_type('epals_session', array(
         'labels' => array(
             'name' => 'epals session',
@@ -81,6 +84,7 @@ function create_admin_tool() {
         "query_var" => false
             )
     );
+
 
     register_post_type('epals_assignment_', array(
         'labels' => array(
@@ -111,6 +115,7 @@ function create_admin_tool() {
             )
     );
 
+
     register_post_type('epals_activity', array(
         'labels' => array(
             'name' => 'epals activity',
@@ -139,6 +144,7 @@ function create_admin_tool() {
         "query_var" => false
             )
     );
+
 
     register_post_type('epals_group_', array(
         'labels' => array(
@@ -169,34 +175,6 @@ function create_admin_tool() {
             )
     );
 
-    register_post_type('epals_resource', array(
-        'labels' => array(
-            'name' => 'epals resource',
-            'singular_name' => 'epals resource',
-            'add_new' => 'Add New',
-            'add_new_item' => 'Add New resource',
-            'edit' => 'Edit',
-            'edit_item' => 'Edit resource Review',
-            'new_item' => 'New resource Review',
-            'view' => 'View',
-            'view_item' => 'View resource Review',
-            'search_items' => 'Search resource Reviews',
-            'not_found' => 'No resource Reviews found',
-            'not_found_in_trash' => 'No resource Reviews found in Trash',
-            'parent' => 'Parent resource Review'
-        ),
-        'public' => true,
-        'menu_position' => 15,
-        'supports' => array('title', 'editor'),
-        //, 'comments', 'thumbnail', 'custom-fields'
-        "public" => true,
-        "show_ui" => true,
-        "capability_type" => "post",
-        "hierarchical" => true,
-        "rewrite" => false,
-        "query_var" => false
-            )
-    );
 
     register_post_type('epals_resource', array(
         'labels' => array(
@@ -226,6 +204,37 @@ function create_admin_tool() {
         "query_var" => false
             )
     );
+
+
+    register_post_type('epals_resource', array(
+        'labels' => array(
+            'name' => 'epals resource',
+            'singular_name' => 'epals resource',
+            'add_new' => 'Add New',
+            'add_new_item' => 'Add New resource',
+            'edit' => 'Edit',
+            'edit_item' => 'Edit resource Review',
+            'new_item' => 'New resource Review',
+            'view' => 'View',
+            'view_item' => 'View resource Review',
+            'search_items' => 'Search resource Reviews',
+            'not_found' => 'No resource Reviews found',
+            'not_found_in_trash' => 'No resource Reviews found in Trash',
+            'parent' => 'Parent resource Review'
+        ),
+        'public' => true,
+        'menu_position' => 15,
+        'supports' => array('title', 'editor'),
+        //, 'comments', 'thumbnail', 'custom-fields'
+        "public" => true,
+        "show_ui" => true,
+        "capability_type" => "post",
+        "hierarchical" => true,
+        "rewrite" => false,
+        "query_var" => false
+            )
+    );
+
 
     register_post_type('epals_tool', array(
         'labels' => array(
@@ -256,6 +265,7 @@ function create_admin_tool() {
             )
     );
 
+
     register_post_type('epals_announcement', array(
         'labels' => array(
             'name' => 'epals announcement',
@@ -284,6 +294,7 @@ function create_admin_tool() {
         "query_var" => false
             )
     );
+
 
     register_post_type('epals_discussion', array(
         'labels' => array(
@@ -318,6 +329,8 @@ function create_admin_tool() {
 add_action('init', 'create_admin_tool');
 
 
+
+
 /* iterate sessions of course */
 
 function add_session_list_box() {//添加设置区域的函数
@@ -336,11 +349,13 @@ function add_session_list_box() {//添加设置区域的函数
 function draw_sessions($post, $boxargs) {
     global $wpdb;
     $sql_query_session_in_course = "SELECT met.post_id,po.*
-	    FROM wp_postmeta met,wp_posts po
-	    WHERE met.meta_key = 'courseID' AND met.meta_value = '" . $post->ID . "' AND po.ID = met.post_id";
+   FROM wp_postmeta met,wp_posts po
+   WHERE met.meta_key = 'courseID' AND met.meta_value = '" . $post->ID . "' AND po.ID = met.post_id";
     $result = $wpdb->get_results($sql_query_session_in_course);
 
+
     show_datagrid($result);
+
 
     echo '<br>&nbsp;<a style="font-color:blue;" href="' . admin_url() . 'post-new.php?post_type=epals_session">Add new</a>';
 }
@@ -348,11 +363,13 @@ function draw_sessions($post, $boxargs) {
 function draw_assginments($post, $boxargs) {
     global $wpdb;
     $sql_query_session_in_course = "SELECT met.post_id,po.*
-	    FROM wp_postmeta met,wp_posts po
-	    WHERE met.meta_key = 'sessionID' AND met.meta_value = '" . $post->ID . "' AND po.ID = met.post_id AND po.`post_type` = 'epals_assignment_'";
+   FROM wp_postmeta met,wp_posts po
+   WHERE met.meta_key = 'sessionID' AND met.meta_value = '" . $post->ID . "' AND po.ID = met.post_id AND po.`post_type` = 'epals_assignment_'";
     $result = $wpdb->get_results($sql_query_session_in_course);
 
+
     show_datagrid($result);
+
 
     echo '<br>&nbsp;<a style="font-color:blue;" href="' . admin_url() . 'post-new.php?post_type=epals_assignment_">Add new</a>';
 }
@@ -360,11 +377,13 @@ function draw_assginments($post, $boxargs) {
 function draw_announcement($post, $boxargs) {
     global $wpdb;
     $sql_query_session_in_course = "SELECT met.post_id,po.*
-	    FROM wp_postmeta met,wp_posts po
-	    WHERE met.meta_key = 'sessionID' AND met.meta_value = '" . $post->ID . "' AND po.ID = met.post_id AND po.`post_type` = 'epals_announcement'";
+   FROM wp_postmeta met,wp_posts po
+   WHERE met.meta_key = 'sessionID' AND met.meta_value = '" . $post->ID . "' AND po.ID = met.post_id AND po.`post_type` = 'epals_announcement'";
     $result = $wpdb->get_results($sql_query_session_in_course);
 
+
     show_datagrid($result);
+
 
     echo '<br>&nbsp;<a style="font-color:blue;" href="' . admin_url() . 'post-new.php?post_type=epals_announcement">Add new</a>';
 }
@@ -372,11 +391,13 @@ function draw_announcement($post, $boxargs) {
 function draw_discussion($post, $boxargs) {
     global $wpdb;
     $sql_query_session_in_course = "SELECT met.post_id,po.*
-	    FROM wp_postmeta met,wp_posts po
-	    WHERE met.meta_key = 'sessionID' AND met.meta_value = '" . $post->ID . "' AND po.ID = met.post_id AND po.`post_type` = 'epals_discussion'";
+   FROM wp_postmeta met,wp_posts po
+   WHERE met.meta_key = 'sessionID' AND met.meta_value = '" . $post->ID . "' AND po.ID = met.post_id AND po.`post_type` = 'epals_discussion'";
     $result = $wpdb->get_results($sql_query_session_in_course);
 
+
     show_datagrid($result);
+
 
     echo '<br>&nbsp;<a style="font-color:blue;" href="' . admin_url() . 'post-new.php?post_type=epals_discussion">Add new</a>';
 }
@@ -384,11 +405,13 @@ function draw_discussion($post, $boxargs) {
 function draw_resource($post, $boxargs) {
     global $wpdb;
     $sql_query_session_in_course = "SELECT met.post_id,po.*
-	    FROM wp_postmeta met,wp_posts po
-	    WHERE met.meta_key = 'sessionID' AND met.meta_value = '" . $post->ID . "' AND po.ID = met.post_id AND po.`post_type` = 'epals_resource'";
+   FROM wp_postmeta met,wp_posts po
+   WHERE met.meta_key = 'sessionID' AND met.meta_value = '" . $post->ID . "' AND po.ID = met.post_id AND po.`post_type` = 'epals_resource'";
     $result = $wpdb->get_results($sql_query_session_in_course);
 
+
     show_datagrid($result);
+
 
     echo '<br>&nbsp;<a style="font-color:blue;" href="' . admin_url() . 'post-new.php?post_type=epals_resource">Add new</a>';
 }
@@ -401,6 +424,7 @@ function show_datagrid($result) {
     echo '<table>';
     echo '<tr><td width="50%">Name</td><td width="50%">Last Modified</td><td></td></tr>';
 
+
     for ($i = 0; $i < count($result); $i++) {
         $editUrl = admin_url() . "post.php?post=" . $result[$i]->ID . "&action=edit";
         echo '<tr><td>' . $result[$i]->post_title . '</td><td>' . $result[$i]->post_modified . '</td><td><a style="font-color:blue;" href="' . $editUrl . '">Edit</a></td></tr>';
@@ -410,13 +434,15 @@ function show_datagrid($result) {
 
 add_action('add_meta_boxes', 'add_session_list_box');
 
+
 /*
   ++++++++++++++++++
   ++++++++++++++++++
  */
 
+
 //elastic search insert (Epals API)
-add_action('save_post', es_save_post);
+//add_action('save_post', es_save_post);
 
 function es_save_post($para1 = "", $para2 = "", $para3 = "") {
     $title = $_POST['post_title'];
@@ -425,231 +451,260 @@ function es_save_post($para1 = "", $para2 = "", $para3 = "") {
     $post_type = $post_info->post_type;
     if (isset($_POST)) {
         switch ($post_type) {
-            //case 'epals_course'://1
-                echo "epals_course";
-//es_add_course($para1, $title, $content);
+            case 'epals_course'://1
+                //echo "epals_course";
+                es_add_course($para1, $title, $content);
                 break;
-            //case 'epals_session'://1
-                echo "epals_session";
-//es_add_session($para1, $title, $content);
+            case 'epals_session'://1
+                //echo "epals_session";
+                es_add_session($para1, $title, $content);
                 break;
-            //case 'epals_assignment'://1
-                echo "epals_assignment";
-//es_add_assignment($para1, $title, $content);
+            case 'epals_assignment_'://1
+                //echo "epals_assignment";
+                es_add_assignment($para1, $title, $content);
                 break;
-            //case 'epals_activity'://1 ?
-                echo "epals_activity";
-//es_add_activity($para1, $title, $content);
+            case 'epals_activity'://1 ?
+                //echo "epals_activity";
+                es_add_activity($para1, $title, $content);
                 break;
-            //case 'epals_group'://1
-                echo "epals_group";
-//es_add_group($para1, $title, $content);
+            case 'epals_group_'://1
+                //echo "epals_group";
+                es_add_group($para1, $title, $content);
                 break;
-            //case 'epals_resource'://1
-                echo "epals_resource";
-//es_add_resource($para1, $title, $content);
+            case 'epals_resource'://1
+                //echo "epals_resource";
+                es_add_resource($para1, $title, $content);
                 break;
-            //case 'epals_gallery'://?
-                echo "epals_gallery";
-//es_add_gallery($para1, $title, $content);
+            case 'epals_gallery'://?
+                //echo "epals_gallery";
+                es_add_gallery($para1, $title, $content);
                 break;
-            //case 'epals_tool'://?
-                echo "epals_tool";
-//es_add_tool($para1, $title, $content);
+            case 'epals_tool'://?
+                //echo "epals_tool";
+                es_add_tool($para1, $title, $content);
                 break;
-            //case 'epals_announcement'://1
-                echo "epals_announcement";
-//es_add_announcement($para1, $title, $content);
+            case 'epals_announcement'://1
+                //echo "epals_announcement";
+                es_add_announcement($para1, $title, $content);
                 break;
-            //case 'epals_discussion'://1
-                echo "epals_discussion";
-//es_add_discussion($para1, $title, $content);
+            case 'epals_discussion'://1
+                //echo "epals_discussion";
+                es_add_discussion($para1, $title, $content);
                 break;
             default:
-                var_dump("error:no config type!");
+                //var_dump("error:no config type!");
                 break;
         }
     }
-    $fields = get_field_objects($para1);
-    print_r($fields[resource]);
+    //$fields = get_field_objects($para1);
+    //print_r($fields[resource]);
 }
 
 function es_add_course($post_id, $title, $content) {
-    $ini = parse_ini_file(dirname(dirname(__FILE__)) . '/admin-tool/api.ini', TRUE);
-    $fields = get_field_objects($post_id);
-    $esid = '';
-    if (isset($fields['ElasticsearchID'])) {
-        $esid = $fields['ElasticsearchID']['value'];
-    }
-    $a = new Course();
-    $a->set_ElasticSearch_Server($ini['elasticsearch']['host'] . ":" . $ini['elasticsearch']['port']);
-    $a->setTitle($_POST['post_title']);
-    $a->setDescription($_POST['content']);
-    if (!empty($esid)) {
-        $a->update();
-    } else {
-        $a->add();
-        update_post_meta($post_id, 'ElasticsearchID', $a->id);
+    if ($_POST['post_title']) {
+        $ini = parse_ini_file(dirname(dirname(__FILE__)) . '/admin-tool/api.ini', TRUE);
+        $fields = get_field_objects($post_id);
+        $esid = '';
+        if ($flag = get_post_meta($post_id, 'ElasticsearchID')) {
+            $esid = $flag[0];
+        }
+        $a = new Project();
+        $a->set_ElasticSearch_Server($ini['elasticsearch']['host'] . ":" . $ini['elasticsearch']['port']);
+        //$a->setTitle($_POST['post_title']);
+        $a->setProjectname($_POST['post_title']);
+        $a->setDescription($_POST['content']);
+        if (!empty($esid)) {
+            $a->update();
+        } else {
+            $a->add();
+            update_post_meta($post_id, 'ElasticsearchID', $a->id);
+        }
     }
 }
 
 //not found this type in Epals API
-/*
-  function es_add_session($post_id, $title, $content)
-  {
-  $fields = get_field_objects($post_id);
-  $esid = '';
-  if (isset($fields['ElasticsearchID']))
-  {
-  $esid = $fields['ElasticsearchID']['value'];
-  }
-  $a = new Session();
-  $a->setName($_POST['post_title']);
-  $a->setCourseID($fields[relate_to][value]->ID);
-  $a->setOrder($fields[order][value]);
-  if (!empty($esid)) {
-  $a->update();
-  } else {
-  $a->add();
-  update_post_meta( $post_id, 'ElasticsearchID', $a->id);
-  }
-  }
- */
-function es_add_assignment($post_id, $title, $content) {
-    $ini = parse_ini_file(dirname(dirname(__FILE__)) . '/admin-tool/api.ini', TRUE);
-    $fields = get_field_objects($post_id);
-    $esid = '';
-    if (isset($fields['ElasticsearchID'])) {
-        $esid = $fields['ElasticsearchID']['value'];
+
+
+function es_add_session($post_id, $title, $content) {
+    if ($_POST['post_title']) {
+        $ini = parse_ini_file(dirname(dirname(__FILE__)) . '/admin-tool/api.ini', TRUE);
+        $fields = get_field_objects($post_id);
+        $esid = '';
+        if ($flag = get_post_meta($post_id, 'ElasticsearchID')) {
+            $esid = $flag[0];
+        }
+        $a = new Session();
+        $a->set_ElasticSearch_Server($ini['elasticsearch']['host'] . ":" . $ini['elasticsearch']['port']);
+        $a->setName($_POST['post_title']);
+        $a->setMetadata('CourseID', $fields[couresID][value]);
+        $a->setMetadata('Order', $fields[order][value]);
+        if (!empty($esid)) {
+            $a->update();
+        } else {
+            $a->add();
+            update_post_meta($post_id, 'ElasticsearchID', $a->id);
+        }
     }
-    $a = new Assignment();
-    $a->set_ElasticSearch_Server($ini['elasticsearch']['host'] . ":" . $ini['elasticsearch']['port']);
-    $a->setName($_POST['post_title']);
-    $a->setMetadata('sessionid', $fields[relate_to][value]->ID);
-    if (!empty($esid)) {
-        $a->update();
-    } else {
-        $a->add();
-        update_post_meta($post_id, 'ElasticsearchID', $a->id);
+}
+
+function es_add_assignment($post_id, $title, $content) {
+    if ($_POST['post_title']) {
+        $ini = parse_ini_file(dirname(dirname(__FILE__)) . '/admin-tool/api.ini', TRUE);
+        $fields = get_field_objects($post_id);
+        $esid = '';
+        if ($flag = get_post_meta($post_id, 'ElasticsearchID')) {
+            $esid = $flag[0];
+        }
+        $a = new Assignment();
+        $a->set_ElasticSearch_Server($ini['elasticsearch']['host'] . ":" . $ini['elasticsearch']['port']);
+        $a->setName($_POST['post_title']);
+        $a->setMetadata('sessionid', $fields[relate_to][value]->ID);
+        if (!empty($esid)) {
+            $a->update();
+        } else {
+            $a->add();
+            update_post_meta($post_id, 'ElasticsearchID', $a->id);
+        }
     }
 }
 
 //not found this type in requirement doc 
 
 
+
+
 function es_add_activity($post_id, $title, $content) {
-    $ini = parse_ini_file(dirname(dirname(__FILE__)) . '/admin-tool/api.ini', TRUE);
-    $fields = get_field_objects($post_id);
-    $esid = '';
-    if (isset($fields['ElasticsearchID'])) {
-        $esid = $fields['ElasticsearchID']['value'];
-    }
-    $a = new Activity();
-    $a->set_ElasticSearch_Server($ini['elasticsearch']['host'] . ":" . $ini['elasticsearch']['port']);
-    $a->setName($_POST['post_title']);
-    $a->setMetadata('type', $fields[type][value]);
-    $a->setAssignmentId($fields[relate_to][value]->ID);
-    if (!empty($esid)) {
-        $a->update();
-    } else {
-        $a->add();
-        update_post_meta($post_id, 'ElasticsearchID', $a->id);
+    if ($_POST['post_title']) {
+        $ini = parse_ini_file(dirname(dirname(__FILE__)) . '/admin-tool/api.ini', TRUE);
+        $fields = get_field_objects($post_id);
+        $esid = '';
+        if ($flag = get_post_meta($post_id, 'ElasticsearchID')) {
+            $esid = $flag[0];
+        }
+        $a = new Activity();
+        $a->set_ElasticSearch_Server($ini['elasticsearch']['host'] . ":" . $ini['elasticsearch']['port']);
+        $a->setName($_POST['post_title']);
+        $a->setMetadata('type', $fields[type][value]);
+        $a->setAssignmentId($fields[relate_to][value]->ID);
+        if (!empty($esid)) {
+            $a->update();
+        } else {
+            $a->add();
+            update_post_meta($post_id, 'ElasticsearchID', $a->id);
+        }
     }
 }
-/*
+
 //not found this type in Epals API
+
 
 function es_add_group($post_id, $title, $content) {
-    $fields = get_field_objects($post_id);
-    $esid = '';
-    if (isset($fields['ElasticsearchID'])) {
-        $esid = $fields['ElasticsearchID']['value'];
-    }
-    $a = new Group();
-    $a->setName($_POST['post_title']);
-//$a->setMember($_POST['member_array']) 
-    $a->setParent($fields[parent][value]->ID);
-    $a->setProject($fields[project][value]->ID);
-    if (!empty($esid)) {
-        $a->update();
-    } else {
-        $a->add();
-        update_post_meta($post_id, 'ElasticsearchID', $a->id);
+    if ($_POST['post_title']) {
+        $ini = parse_ini_file(dirname(dirname(__FILE__)) . '/admin-tool/api.ini', TRUE);
+        $fields = get_field_objects($post_id);
+        $esid = '';
+        if ($flag = get_post_meta($post_id, 'ElasticsearchID')) {
+            $esid = $flag[0];
+        }
+        $a = new Group();
+        $a->set_ElasticSearch_Server($ini['elasticsearch']['host'] . ":" . $ini['elasticsearch']['port']);
+        $a->setName($_POST['post_title']);
+        $a->setMetadata('member', $fields[members][value]);
+        $a->setMetadata('parentid', $fields[parent][value]->ID);
+        $a->setMetadata('projectid', $fields[project][value]->ID);
+        if (!empty($esid)) {
+            $a->update();
+        } else {
+            $a->add();
+            update_post_meta($post_id, 'ElasticsearchID', $a->id);
+        }
     }
 }
 
 //not found this type in Epals API 
+
 
 function es_add_resource($post_id, $title, $content) {
-    $fields = get_field_objects($post_id);
-    $esid = '';
-    if (isset($fields['ElasticsearchID'])) {
-        $esid = $fields['ElasticsearchID']['value'];
-    }
-    $a = new Resource();
-    $a->setName($_POST['post_title']);
-    $a->setDescription($_POST['content']);
-    $a->setLocation($fields[location][value]);
+    if ($_POST['post_title']) {
+        $ini = parse_ini_file(dirname(dirname(__FILE__)) . '/admin-tool/api.ini', TRUE);
+        $fields = get_field_objects($post_id);
+        $esid = '';
+        if ($flag = get_post_meta($post_id, 'ElasticsearchID')) {
+            $esid = $flag[0];
+        }
+        $a = new Resource();
+        $a->set_ElasticSearch_Server($ini['elasticsearch']['host'] . ":" . $ini['elasticsearch']['port']);
+        $a->setName($_POST['post_title']);
+        $a->setDescription($_POST['content']);
+        $a->setMetadata('location', $fields[location][value]);
+        $a->setMetadata('sessionid', $fields[sessionID][value]->ID);
 //$a->setAttachment($_POST['att_url']);
-    if (!empty($esid)) {
-        $a->update();
-    } else {
-        $a->add();
-        update_post_meta($post_id, 'ElasticsearchID', $a->id);
+        if (!empty($esid)) {
+            $a->update();
+        } else {
+            $a->add();
+            update_post_meta($post_id, 'ElasticsearchID', $a->id);
+        }
     }
 }
 
-/*
-  function es_add_gallery($post_id, $title, $content)
-  {
+function es_add_gallery($post_id, $title, $content) {
+    
+}
 
-
-  }
-  function es_add_tool($post_id, $title, $content)
-  {
-
-
-  }
- */
+function es_add_tool($post_id, $title, $content) {
+    
+}
 
 //not found this type in Epals API
-/*
+
+
 function es_add_announcement($post_id, $title, $content) {
-    $fields = get_field_objects($post_id);
-    $esid = '';
-    if (isset($fields['ElasticsearchID'])) {
-        $esid = $fields['ElasticsearchID']['value'];
-    }
-    $a = new Announcement();
-    $a->setTitle($_POST['post_title']);
+    if ($_POST['post_title']) {
+        $ini = parse_ini_file(dirname(dirname(__FILE__)) . '/admin-tool/api.ini', TRUE);
+        $fields = get_field_objects($post_id);
+        $esid = '';
+        if ($flag = get_post_meta($post_id, 'ElasticsearchID')) {
+            $esid = $flag[0];
+        }
+        $a = new Announcement();
+        $a->set_ElasticSearch_Server($ini['elasticsearch']['host'] . ":" . $ini['elasticsearch']['port']);
+        $a->setName($_POST['post_title']);
 //$a->setAudience('audience_array');
-    $a->setText($fields[Text][value]);
-    if (!empty($esid)) {
-        $a->update();
-    } else {
-        $a->add();
-        update_post_meta($post_id, 'ElasticsearchID', $a->id);
+        $a->setDescription($_POST['content']);
+        if (!empty($esid)) {
+            $a->update();
+        } else {
+            $a->add();
+            update_post_meta($post_id, 'ElasticsearchID', $a->id);
+        }
     }
 }
 
 //not found this type in Epals API 
 
+
 function es_add_discussion($post_id, $title, $content) {
-    $fields = get_field_objects($post_id);
-    $esid = '';
-    if (isset($fields['ElasticsearchID'])) {
-        $esid = $fields['ElasticsearchID']['value'];
-    }
-    $a = new Discussion();
-    $a->setName($_POST['post_title']);
-    $a->setMainpost($_POST['content']);
-    $a->setGroupid($fields[Groupid][value]->ID);
-    if (!empty($esid)) {
-        $a->update();
-    } else {
-        $a->add();
-        update_post_meta($post_id, 'ElasticsearchID', $a->id);
+    if ($_POST['post_title']) {
+        $ini = parse_ini_file(dirname(dirname(__FILE__)) . '/admin-tool/api.ini', TRUE);
+        $fields = get_field_objects($post_id);
+        $esid = '';
+        if ($flag = get_post_meta($post_id, 'ElasticsearchID')) {
+            $esid = $flag[0];
+        }
+        $a = new Discussion();
+        $a->set_ElasticSearch_Server($ini['elasticsearch']['host'] . ":" . $ini['elasticsearch']['port']);
+        $a->setName($_POST['post_title']);
+        $a->setDescription($_POST['content']);
+        $a->setMetadata('groupid', $fields[group_id][value]->ID);
+        $a->setMetadata('sessionid', $fields[sessionID][value]->ID);
+        if (!empty($esid)) {
+            $a->update();
+        } else {
+            $a->add();
+            update_post_meta($post_id, 'ElasticsearchID', $a->id);
+        }
     }
 }
-*/
+
 ?>
