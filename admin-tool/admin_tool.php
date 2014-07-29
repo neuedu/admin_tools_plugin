@@ -12,7 +12,8 @@
 require_once dirname(__FILE__).'/vendor/autoload.php';
 
 use \ePals\Activity;
-use \ePals\Course;
+//use \ePals\Course;
+use \ePals\Project;
 use \ePals\Assignment;
 
 //use \ePals\Session;
