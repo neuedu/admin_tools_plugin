@@ -417,7 +417,7 @@ add_action('add_meta_boxes', 'add_session_list_box');
  */
 
 //elastic search insert (Epals API)
-add_action('save_post', es_save_post);
+//add_action('save_post', es_save_post);
 
 function es_save_post($para1 = "", $para2 = "", $para3 = "") {
     $title = $_POST['post_title'];
