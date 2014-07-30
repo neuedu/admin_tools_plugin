@@ -1,7 +1,7 @@
 <?php
 
 /*
-  Plugin Name: admin tool
+  Plugin Name: admin tool new
   Plugin URI: http://wp.tutsplus.com/
   Description: Declares a plugin that will create a custom post type displaying movie reviews.
   Version: 1.0
