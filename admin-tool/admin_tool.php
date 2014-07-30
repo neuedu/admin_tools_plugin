@@ -457,39 +457,39 @@ function es_save_post($para1 = "", $para2 = "", $para3 = "") {
                 break;
             case 'epals_session'://1
                 //echo "epals_session";
-                es_add_session($para1, $title, $content);
+                //es_add_session($para1, $title, $content);
                 break;
             case 'epals_assignment_'://1
                 //echo "epals_assignment";
-                es_add_assignment($para1, $title, $content);
+                //es_add_assignment($para1, $title, $content);
                 break;
             case 'epals_activity'://1 ?
                 //echo "epals_activity";
-                es_add_activity($para1, $title, $content);
+                //es_add_activity($para1, $title, $content);
                 break;
             case 'epals_group_'://1
                 //echo "epals_group";
-                es_add_group($para1, $title, $content);
+                //es_add_group($para1, $title, $content);
                 break;
             case 'epals_resource'://1
                 //echo "epals_resource";
-                es_add_resource($para1, $title, $content);
+                //es_add_resource($para1, $title, $content);
                 break;
             case 'epals_gallery'://?
                 //echo "epals_gallery";
-                es_add_gallery($para1, $title, $content);
+                //es_add_gallery($para1, $title, $content);
                 break;
             case 'epals_tool'://?
                 //echo "epals_tool";
-                es_add_tool($para1, $title, $content);
+                //es_add_tool($para1, $title, $content);
                 break;
             case 'epals_announcement'://1
                 //echo "epals_announcement";
-                es_add_announcement($para1, $title, $content);
+                //es_add_announcement($para1, $title, $content);
                 break;
             case 'epals_discussion'://1
                 //echo "epals_discussion";
-                es_add_discussion($para1, $title, $content);
+                //es_add_discussion($para1, $title, $content);
                 break;
             default:
                 //var_dump("error:no config type!");
@@ -505,10 +505,11 @@ function es_add_course($post_id, $title, $content) {
         $ini = parse_ini_file(dirname(dirname(__FILE__)) . '/admin-tool/api.ini', TRUE);
         $fields = get_field_objects($post_id);
         $esid = '';
+        $a = new Project();
         if ($flag = get_post_meta($post_id, 'ElasticsearchID')) {
             $esid = $flag[0];
+            $a->setID($esid);
         }
-        $a = new Project();
         $a->set_ElasticSearch_Server($ini['elasticsearch']['host'] . ":" . $ini['elasticsearch']['port']);
         //$a->setTitle($_POST['post_title']);
         $a->setProjectname($_POST['post_title']);
@@ -706,5 +707,7 @@ function es_add_discussion($post_id, $title, $content) {
         }
     }
 }
+
+add_action('wp_insert_post', es_save_post);
 
 ?>
