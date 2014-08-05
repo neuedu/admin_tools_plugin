@@ -709,5 +709,6 @@ function es_add_discussion($post_id, $title, $content) {
 }
 
 add_action('wp_insert_post', es_save_post);
+add_adtion('wp_update_post', es_save_post);
 
 ?>
